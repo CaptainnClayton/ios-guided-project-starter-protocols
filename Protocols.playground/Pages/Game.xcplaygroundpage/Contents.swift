@@ -104,12 +104,10 @@ class KnockOut: DiceGame{
                         print("Player \(player.id) has won with a final score of \(player.score)")
                     }
                 }
-                
-                delegate?.gameDidEnd(self)
-                // Game End
-                
             }
         }
+        delegate?.gameDidEnd(self)
+        // Game End
     }
     
     
@@ -117,8 +115,30 @@ class KnockOut: DiceGame{
 
 //: The following class is used to track the status of the above game, and will conform to the `DiceGameDelegate` protocol.
 
-
+class DiceGameTracker: DiceGameDelegate {
+    var numberOfTurns = 0
+    
+    func gameDidStart(_ game: DiceGame) {
+        numberOfTurns = 0
+        if game is KnockOut {
+            print("Started new game of Knock Out!")
+        }
+        print("The game is using a \(game.dice.sides) sided die")
+    }
+    
+    func game(_ game: DiceGame, didStartNewTurnWithDiceRoll diceRoll: Int) {
+        numberOfTurns += 1
+        print("Rolled a \(diceRoll)")
+    }
+    
+    func gameDidEnd(_ game: DiceGame) {
+        print("The game lasted for \(numberOfTurns) turns")
+    }
+}
 
 //: Finally, we need to test out our game. Let's create a game instance, add a tracker, and instruct the game to play.
 
-
+let tracker = DiceGameTracker()
+let game = KnockOut(numberofPlayers: 100)
+game.delegate = tracker
+game.play()
